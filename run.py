@@ -74,11 +74,20 @@ def hyperparameters_grid_search(model_name, dataset):
     best_test_accuracy = 0
     best_hyperparameters = {"learning_rate": None, "activation_function_name": None}
     # TODO: Complete grid search on learning rates and activation functions. Keep the number of epochs to be 5.
-    # You can use the following print statements to keep track of the hyperparameter search and finally output the best hyperparameters as well as the 
-    # print(f"Current hyperparameters: num_epochs=5, learning_rate={_}, activation_function_name={_}")
-    # print(f"Current accuracy for test images: {_}%")
-    # print(f"Best test accuracy: {best_test_accuracy}%")
-    # print("Best hyperparameters:", best_hyperparameters)
+    for learning_rate in learning_rate_options:
+        for activation_function in activation_function_name_options:
+                print(f"Current hyperparameters: num_epochs=5, learning_rate={learning_rate}, activation_function_name={activation_function}")
+
+                _, test_accuracy = train_and_test(model_name, dataset, 5, learning_rate, activation_function)
+                print(f"Current accuracy for test images: {test_accuracy}%")
+                
+                if test_accuracy > best_test_accuracy:
+                    best_test_accuracy = test_accuracy
+                    best_hyperparameters["learning_rate"] = learning_rate
+                    best_hyperparameters["activation_function_name"] = activation_function
+
+    print(f"Best test accuracy: {best_test_accuracy}%")
+    print("Best hyperparameters:", best_hyperparameters)
     
 
 if __name__ == "__main__":
@@ -101,7 +110,7 @@ if __name__ == "__main__":
         img = img.numpy().transpose((1, 2, 0))
         ax.imshow(img)
         ax.set_title(f"Label: {classes[labels[i]]}\nPredicted: {classes[predicted[i]]}")
-    plt.show()
+    # plt.show()
 
     # Train and test convolutional neural network and save the model
     model, test_accuracy = train_and_test(model_name="convnet", dataset=CIFAR_10_dataset, num_epochs=5, learning_rate=1e-3, activation_function_name="relu")
